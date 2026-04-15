@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 38 Practice Quiz 3</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }[data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }[data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 38 Practice Quiz 3</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData =[
+            // --- Section 1: Drugs of the Lower GI ---
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO1: Explain the mechanisms of action and side effects for laxative classes",
+                question: "A 65-year-old woman with a history of chronic constipation is preparing for a screening colonoscopy. Her physician prescribes a polyethylene glycol (PEG) solution to cleanse her bowel. Which of the following describes the primary mechanism of action of this medication?",
+                options: {
+                    A: "Absorption of water to distend the lumen and trigger peristalsis",
+                    B: "Antagonism of peripheral mu-opioid receptors",
+                    C: "Creation of a high osmotic gradient that pulls water from tissue into the lumen",
+                    D: "Irritation of luminal sensory nerves to stimulate colonic motility",
+                    E: "Reduction of surface tension to allow fat and water to penetrate the stool"
+                },
+                correctAnswer: "C",
+                rationale: "Polyethylene glycol (Miralax) is an osmotic laxative. Its mechanism of action is to create a high osmotic gradient in the lumen, which pulls water from the tissue into the bowel to facilitate evacuation.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 8: 'Osmotic... Polyethylene glycol (Miralax)... Mechanism of Action: Create high osmotic gradient in lumen, pull water from tissue'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO1: Explain the mechanisms of action and side effects for laxative classes",
+                question: "A 40-year-old man presents to the clinic with complaints of infrequent, hard stools. He is advised to increase his water intake and is prescribed psyllium. Which of the following is the most likely side effect this patient might experience from this medication?",
+                options: {
+                    A: "Abnormal bitter taste",
+                    B: "Flatulence and bloating",
+                    C: "Hyporeflexia",
+                    D: "Severe abdominal cramping and colic",
+                    E: "Somnolence"
+                },
+                correctAnswer: "B",
+                rationale: "Psyllium is a bulk-forming laxative. Its mechanism is to absorb water in the lumen and distend it, triggering peristalsis. The most notable side effects (occurring in 5-10% of patients) are flatulence, bloating, and abdominal discomfort.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 9: 'Bulk-Forming: Psyllium, bran, methylcellulose... Side Effects: 5-10%: Flatulence, bloating abdominal discomfort'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO1: Explain the mechanisms of action and side effects for laxative classes",
+                question: "A 55-year-old man presents to urgent care for abdominal pain lasting 2 days after a camping trip. An abdominal radiograph reveals large amounts of stool in the colon with no signs of obstruction. He is prescribed bisacodyl. How does this medication promote a bowel movement?",
+                options: {
+                    A: "Absorbs water to distend the colonic lumen",
+                    B: "Acts as an anionic surfactant to soften the stool",
+                    C: "Antagonizes peripheral mu-opioid receptors",
+                    D: "Creates an osmotic gradient to pull water into the lumen",
+                    E: "Stimulates parasympathetic nerves in the colon directly"
+                },
+                correctAnswer: "E",
+                rationale: "Bisacodyl is a stimulant laxative that directly stimulates parasympathetic nerves in the colon to increase motility and secretion.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 9: 'Stimulant: Bisacodyl, senna... Mechanism of Action: Bisacodyl: stimulates parasympathetic nerves in the colon directly to increase motility and secretion'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO1: Explain the mechanisms of action and side effects for laxative classes",
+                question: "A 70-year-old woman is hospitalized for a myocardial infarction and is placed on bed rest. To prevent straining during bowel movements, her physician prescribes docusate sodium. Which of the following describes the mechanism of action of this medication?",
+                options: {
+                    A: "Activation of type-2 chloride channels",
+                    B: "Anionic detergent action that allows fat and water into the feces",
+                    C: "Antagonism of peripheral mu-opioid receptors",
+                    D: "Creation of an osmotic gradient in the intestinal lumen",
+                    E: "Direct stimulation of colonic parasympathetic nerves"
+                },
+                correctAnswer: "B",
+                rationale: "Docusate sodium is an emollient (stool softener). It acts as an anionic detergent/surfactant that allows fat and water to penetrate and soften the stool.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 9: 'Emollients: Docusate sodium... Mechanism of Action: Anionic detergent/surfactant that allows fat and water into the feces to soften the stool'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO1: Explain the mechanisms of action and side effects for laxative classes",
+                question: "A 50-year-old man with terminal cancer is receiving high doses of morphine for pain management. He develops severe constipation that does not respond to standard laxatives. He is prescribed methylnaltrexone. This medication increases gut motility through which of the following mechanisms?",
+                options: {
+                    A: "Activation of guanylate cyclase-C",
+                    B: "Activation of type-2 chloride channels",
+                    C: "Antagonism of peripheral mu-opioid receptors",
+                    D: "Direct parasympathetic nerve stimulation",
+                    E: "Osmotic retention of fluid in the bowel lumen"
+                },
+                correctAnswer: "C",
+                rationale: "Methylnaltrexone is an opiate antagonist that reverses opioid-induced constipation by antagonizing peripheral mu-opioid receptors, thereby increasing gut motility and secretion, and relaxing the anal sphincter.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 9: 'Opiate Antagonists: Methylnaltrexone, naloxegol... Mechanism of Action: Antagonizes peripheral mu-opioid receptors, increasing gut motility and secretion and relaxing anal sphincter'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO2: Describe the strategies to treat diarrhea and constipation.",
+                question: "A 25-year-old woman presents to the clinic with acute, watery diarrhea. Her vital signs are stable, and she is able to tolerate oral intake. The physician recommends an oral rehydration solution containing sodium and glucose. The inclusion of glucose in this solution improves hydration status through which of the following mechanisms?",
+                options: {
+                    A: "Active cotransport with sodium into the intestinal mucosa",
+                    B: "Creation of a reverse osmotic gradient in the colon",
+                    C: "Direct inhibition of mucosal adenylate cyclase",
+                    D: "Fermentation into short-chain fatty acids",
+                    E: "Stimulation of the enteric nervous system"
+                },
+                correctAnswer: "A",
+                rationale: "Oral rehydration therapy utilizes both Na+ and glucose because they are actively co-transported (taken up) into the intestinal mucosa, which pulls water along with them, effectively rehydrating the patient.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 12: 'Oral rehydration therapy for outpatient – Na+ and glucose are key since they have active uptake into the intestinal mucosa'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO2: Describe the strategies to treat diarrhea and constipation.",
+                question: "A 68-year-old nursing home resident is evaluated for severe constipation. He has not had a bowel movement in 7 days despite daily doses of polyethylene glycol. A digital rectal examination reveals a hard stool ball in the rectal vault. According to standard management algorithms, what is the most appropriate next step in therapy?",
+                options: {
+                    A: "Administer oral senna",
+                    B: "Increase polyethylene glycol dose",
+                    C: "Perform manual disimpaction",
+                    D: "Prescribe oral docusate sodium",
+                    E: "Prescribe oral methylnaltrexone"
+                },
+                correctAnswer: "C",
+                rationale: "According to the constipation treatment algorithm, if a patient has a hard stool ball in the rectum/fecal impaction, the recommended immediate step is an enema or manual disimpaction.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 13: Algorithm flowchart: 'Hard stool ball in rectum/fecal impaction -> 3. Give an enema... 4. Manual disimpaction'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO3: Explain the mechanisms of action and side effects of anti-diarrheals",
+                question: "A 30-year-old man preparing for a trip to Mexico purchases over-the-counter bismuth subsalicylate for diarrhea prophylaxis. Which of the following is a recognized side effect of this medication that the patient should be warned about?",
+                options: {
+                    A: "Abuse potential leading to dependency",
+                    B: "Interference with fat-soluble vitamin absorption",
+                    C: "Reversible oligozoospermia",
+                    D: "Severe somnolence",
+                    E: "Stool discoloration"
+                },
+                correctAnswer: "E",
+                rationale: "Bismuth subsalicylate is an anti-secretory anti-diarrheal that can cause harmless stool discoloration (blackening of the stool and tongue) in >10% of users.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 5: 'Anti-secretory: Bismuth subsalicylate... Side Effects: >10%: Constipation, nausea/vomiting, stool discoloration'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO3: Explain the mechanisms of action and side effects of anti-diarrheals",
+                question: "A 42-year-old woman develops non-bloody, watery diarrhea and abdominal cramping. She takes over-the-counter loperamide to control her symptoms. How does this medication exert its anti-diarrheal effect?",
+                options: {
+                    A: "Binding to and neutralizing bacterial toxins",
+                    B: "Binding to bile acids to prevent colonic stimulation",
+                    C: "Decreasing peristalsis via peripheral mu-receptors",
+                    D: "Inhibiting the chemotactic response to leukotriene B4",
+                    E: "Preventing leukocyte recruitment into the bowel wall"
+                },
+                correctAnswer: "C",
+                rationale: "Loperamide is an opioid agonist that decreases peristalsis to allow further water reabsorption from the lumen by acting on peripheral mu-receptors in the gut.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 5: 'Opioid agonists: Loperamide & diphenoxylate/atropine... Mechanism of Action: Decrease peristalsis to allow further water reabsorption from the lumen through the peripheral Mu- receptor'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO4: Explain mechanisms of action of medications used for ulcerative colitis and Crohn’s disease",
+                question: "A 32-year-old man is diagnosed with mild ulcerative colitis and is prescribed oral mesalamine. This medication reduces colonic inflammation primarily by inhibiting the synthesis of which of the following mediators?",
+                options: {
+                    A: "Cyclic GMP",
+                    B: "Interleukin-12",
+                    C: "Leukotriene B4",
+                    D: "Tumor necrosis factor-alpha",
+                    E: "Type-2 chloride channels"
+                },
+                correctAnswer: "C",
+                rationale: "Mesalamine is an aminosalicylate. Its mechanism of action involves preventing leukocyte recruitment by inhibiting the chemotactic response to leukotriene B4 and reducing the synthesis of platelet-activating factor.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 16: 'Aminosalicylates... Mechanism of Action: Prevent leucocyte recruitment into the bowel wall, Inhibit the chemotactic response to leukotriene B4, Reduce the synthesis of platelet activating factor'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO4: Explain mechanisms of action of medications used for ulcerative colitis and Crohn’s disease",
+                question: "A 45-year-old woman with severe Crohn's disease is started on vedolizumab after failing TNF-alpha inhibitors. This targeted immunotherapy specifically blocks inflammation in the gut without a high risk of progressive multifocal leukoencephalopathy (PML). What is the direct molecular target of this medication?",
+                options: {
+                    A: "α4β1-integrin",
+                    B: "α4β7-integrin",
+                    C: "p40 subunit of IL-12",
+                    D: "Platelet activating factor",
+                    E: "Tumor necrosis factor-alpha"
+                },
+                correctAnswer: "B",
+                rationale: "Vedolizumab is an antibody targeted towards α4β7-integrin-mediated leukocyte adhesion. This target is specific to the gut, providing a lower risk of progressive multifocal leukoencephalopathy (PML) compared to natalizumab, which targets α4β1-integrin in the brain.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 17: 'Vedolizumab: Mechanism of Action: Antibody towards α4β7-integrin-mediated leukocyte adhesion... Lower risk of progressive multifocal leukoencephalopathy (PML) compared to natalizumab (targets α4β1-integrin (brain) and α4β7-integrin (gut)'"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO5: Explain treatment strategies for ulcerative colitis and Crohn’s disease",
+                question: "A 35-year-old man with Crohn's disease presents with a severe, acute flare characterized by significant abdominal pain and frequent bloody stools. According to the treatment pyramid for inflammatory bowel disease, which of the following medication classes is most appropriate to induce rapid remission during this acute flare?",
+                options: {
+                    A: "Aminosalicylates (e.g., 5-ASA)",
+                    B: "Antimetabolites (e.g., methotrexate)",
+                    C: "Oral/IV corticosteroids",
+                    D: "Targeted immunotherapy (e.g., Ustekinumab)",
+                    E: "Topical corticosteroids"
+                },
+                correctAnswer: "C",
+                rationale: "In the treatment pyramid for inflammatory bowel disease, acute flares are treated with Oral/IV steroids, whereas maintenance therapy utilizes immunomodulators and targeted immunotherapy.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 15: 'Acute... Oral/IV steroids: Flares' (Treatment pyramid diagram)"
+            },
+            {
+                section: "Drugs of the Lower GI",
+                fullLO: "LO5: Explain treatment strategies for ulcerative colitis and Crohn’s disease",
+                question: "A 28-year-old woman is newly diagnosed with mild ulcerative colitis confined to the rectum. To begin maintenance therapy at the lowest step of the treatment pyramid, which of the following is the most appropriate initial medication class?",
+                options: {
+                    A: "Aminosalicylates",
+                    B: "Cyclosporine",
+                    C: "Immunosuppressants (e.g., Azathioprine)",
+                    D: "Oral Corticosteroids",
+                    E: "TNF-alpha inhibitors"
+                },
+                correctAnswer: "A",
+                rationale: "The base (least aggressive step) of the treatment pyramid for maintenance of inflammatory bowel disease consists of Aminosalicylates (5-ASA) or Sulfasalazine.",
+                source: "\"Lower Gastrointestinal Pharmacology PDF\", Slide 15: 'Maintenance... Least[Aggressive]: Aminosalicylates (5-ASA)/Sulfasalazine'"
+            },
+
+            // --- Section 2: Disorders of the Small & Large Intestines ---
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO1: Describe Celiac’s disease.",
+                question: "A 24-year-old female law student presents to the clinic with a 6-year history of increasing abdominal bloating and bulky, loose stools. Physical examination reveals she is thin and pale, has spoon-shaped nails, and exhibits partially healed blistering skin lesions on her elbows and knees. An upper gastrointestinal endoscopy with a duodenal biopsy is performed. Which of the following histologic findings is most likely to be seen?",
+                options: {
+                    A: "Crypt hypertrophy",
+                    B: "Deep, knife-like transmural ulcers",
+                    C: "Dilated submucosal venules",
+                    D: "Noncaseating granulomas",
+                    E: "Thickening of the circular muscle layer"
+                },
+                correctAnswer: "A",
+                rationale: "The patient's clinical presentation (bulky stools, anemia [spoon-shaped nails], blistering skin rash [dermatitis herpetiformis]) is classic for Celiac disease. The pathogenesis involves immune-mediated sensitivity to gluten causing lymphocyte infiltration, mucosal destruction, and blunting/flattening of the villi (villous atrophy). To compensate for the villous atrophy, the intestinal crypts undergo hypertrophy.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 6: 'Pathogenesis: ... villi become blunted or flat (called villous atrophy). Therefore the crypts hypertrophy.'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO1: Describe Celiac’s disease.",
+                question: "A 28-year-old woman presents with a 2-year history of abdominal bloating, fatigue, and bulky, foul-smelling stools. Her complete blood count reveals a microcytic anemia, and she is suspected of having a gluten-sensitive enteropathy. Which of the following is the most appropriate initial serological test to aid in the diagnosis of this patient's condition?",
+                options: {
+                    A: "Anti-nuclear antibody",
+                    B: "Anti-Saccharomyces cerevisiae antibody",
+                    C: "Carcinoembryonic antigen",
+                    D: "Serum tissue transglutaminase antibody",
+                    E: "Vasoactive intestinal peptide levels"
+                },
+                correctAnswer: "D",
+                rationale: "The recommended initial serologic investigations for a patient with suspected celiac disease include total IgA and antibodies against tissue transglutaminase and endomysium.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 21: 'Investigations of a Patient With Suspected Celiac Disease... Blood for total IgA and tissue transglutaminase, anti endomyseal antibody.'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO1: Describe Celiac’s disease.",
+                question: "A 45-year-old man with a known history of celiac disease has been adherent to a strict gluten-free diet for 10 years, with complete resolution of his symptoms. He now returns to the clinic reporting two months of severe, progressively worsening abdominal pain and a 10-pound weight loss. Based on his medical history, this patient's new symptoms raise the highest suspicion for which of the following complications?",
+                options: {
+                    A: "Adenocarcinoma of the colon",
+                    B: "Cholangiocarcinoma",
+                    C: "Hepatocellular carcinoma",
+                    D: "Non-Hodgkin's lymphoma",
+                    E: "Squamous cell carcinoma of the esophagus"
+                },
+                correctAnswer: "D",
+                rationale: "Celiac disease carries a well-documented risk of serious complications, particularly if refractory or presenting with new-onset abdominal pain. Patients are at an increased risk of developing GI malignancies, specifically enteropathy-associated T-cell lymphoma (a type of non-Hodgkin's lymphoma).",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slides 20 & 23: 'Celiac Disease Complications... GI malignancy (non-Hodgkin’s lymphoma)... Watch out for abdominal pain, Lymphoma!'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO2: Describe the consequences of small bowel resection.",
+                question: "A 42-year-old woman undergoes a localized resection of 40 cm of her terminal ileum due to a stricture. Two months later, she presents to the clinic complaining of chronic, watery diarrhea. Her stool output is moderate, and she denies seeing fat or oil in the toilet bowl. Which of the following is the most appropriate pharmacotherapy for this patient's diarrhea?",
+                options: {
+                    A: "Cholestyramine",
+                    B: "Docusate sodium",
+                    C: "Pancreatic enzyme replacement",
+                    D: "Polyethylene glycol",
+                    E: "Vitamin B12 injections"
+                },
+                correctAnswer: "A",
+                rationale: "Small bowel resections of <50 cm cause unabsorbed bile salts to spill into the colon, leading to a secretory diarrhea (bile salt diarrhea) without overt steatorrhea (<20g fat/day). Because the diarrhea is driven by bile salts irritating the colon, it responds excellently to bile acid sequestrants like cholestyramine.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 39: 'Effects of Small Bowel Resection... <50cms... Steatorrhea: No (<20gm/day)... Response to cholestyramine: Yes... Diarrhea: Bile salt loss'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO2: Describe the consequences of small bowel resection.",
+                question: "A 55-year-old man undergoes an emergency laparotomy following a mesenteric artery thrombosis, resulting in the resection of 120 cm of his terminal ileum. Six months later, he presents with voluminous, foul-smelling diarrhea and profound weight loss. A trial of cholestyramine fails to improve his symptoms. The failure of cholestyramine in this patient is most likely because his diarrhea is primarily driven by which of the following?",
+                options: {
+                    A: "Bacterial overgrowth in the remaining ileum",
+                    B: "Complete loss of gastric intrinsic factor",
+                    C: "Excessive dietary carbohydrate intake",
+                    D: "Rapid gastric emptying",
+                    E: "Unabsorbed dietary fat"
+                },
+                correctAnswer: "E",
+                rationale: "Resections of the terminal ileum greater than 100 cm result in severe bile salt loss that completely depletes the bile salt pool. This leads to profound fat malabsorption (steatorrhea >20gm/day) rather than simple bile salt diarrhea. Consequently, the diarrhea is driven by unabsorbed dietary fat, and it will respond to a low-fat diet, but the response to cholestyramine will be negative.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 39: 'Effects of Small Bowel Resection... >100[cm]... Steatorrhea: Yes (>20gm/day)... Response to cholestyramine: No... Diarrhea: Steatorrhea - loss of fat + BS'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO2: Describe the consequences of small bowel resection.",
+                question: "A 62-year-old man who underwent a massive small bowel resection (110 cm of terminal ileum) three years ago presents with worsening fatigue, loss of balance while walking, and memory disturbances. Physical examination reveals a bald, red tongue and diminished vibratory sensation in his lower extremities. A complete blood count reveals a hemoglobin of 7.2 g/dL and a mean corpuscular volume (MCV) of 120 fL. Which of the following findings is most likely to be seen on a peripheral blood smear from this patient?",
+                options: {
+                    A: "Hypersegmented neutrophils",
+                    B: "Hypochromic, microcytic erythrocytes",
+                    C: "Schistocytes",
+                    D: "Sickle-shaped erythrocytes",
+                    E: "Target cells"
+                },
+                correctAnswer: "A",
+                rationale: "The patient is presenting with a classic picture of severe Vitamin B12 deficiency secondary to the loss of his terminal ileum absorptive surface (>100 cm resection). Signs include macrocytic anemia (MCV > 100), glossitis (bald, red tongue), and posterior column dysfunction/dementia. A hallmark finding on a peripheral smear for B12 (megaloblastic) anemia is the presence of hypersegmented neutrophils.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slides 27, 28, & 31: Images from the case presentation slides depict a macrocytic anemia (MCV 120 fL) with a peripheral smear clearly showing a hypersegmented neutrophil. The conclusion states: 'This patient suffers from vitamin B-12 deficiency... The pt. has some symptoms and signs of posterior column dysfunction and dementia due to vit.B-12 deficiency anemia.'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO3: Inferred LO: Diarrhea",
+                question: "A 55-year-old man is evaluated for chronic, copious diarrhea producing over 1.5 liters of stool per day. He is admitted to the hospital and placed on a strict 24-hour fast, but his diarrhea continues unabated throughout the night. Fecal analysis reveals a stool pH of 7.5 and an osmotic gap of 20 mOsm/kg. Which of the following is the most likely underlying cause of this patient's diarrhea?",
+                options: {
+                    A: "Celiac disease",
+                    B: "Ingestion of magnesium antacids",
+                    C: "Lactose intolerance",
+                    D: "Sorbitol malabsorption",
+                    E: "Vasoactive intestinal peptide-producing tumor"
+                },
+                correctAnswer: "E",
+                rationale: "The patient has classic features of secretory diarrhea: it does not stop with fasting, occurs around the clock, has a massive volume (>1 liter), an osmotic gap <50, and a pH >7. Secretory causes include toxins and hormone-secreting tumors (like a VIP-producing tumor, carcinoid, or pheochromocytoma). In contrast, osmotic diarrhea (caused by lactose, sorbitol, or magnesium antacids) stops upon fasting and features an osmotic gap >50.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slides 50 & 52: 'Is this a Osmotic or Secretory Diarrhoea? ... Secretory: Not related to meal... Diarrhea all the time... Vol.>1liter... Osmotic gap <50... pH>7' AND 'Secretory causes: Toxins, Hormones (Carcinoid, Phaeochromocytoma, VIP producing tumors)'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO3: Inferred LO: Diarrhea",
+                question: "A 32-year-old woman presents to the clinic with a 3-day history of diarrhea. She reports passing frequent, small-volume stools accompanied by lower abdominal pain. She has noticed mucus in the toilet bowl but no undigested food. Based on these clinical characteristics, the primary source of her diarrhea is most likely located in which of the following structures?",
+                options: {
+                    A: "Duodenum",
+                    B: "Ileum",
+                    C: "Jejunum",
+                    D: "Large bowel",
+                    E: "Stomach"
+                },
+                correctAnswer: "D",
+                rationale: "Diarrhea originating from the large bowel is classically characterized by small volume stools, lower abdominal pain, the absence of undigested food, and stools that are less watery but contain more mucus. Small bowel diarrhea typically presents with large volumes, mid-abdominal pain, and occurs a few hours after eating.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 51: 'Is this a Small or Large Bowel Diarrhoea? ... Large Bowel: Small volume... Lower- adb. Pain... Undigested food absent... Less watery, more mucous'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO4: Inferred LO: Lower Gastrointestinal Bleeding",
+                question: "A 72-year-old man is brought to the emergency department because of the sudden onset of a large amount of bright red blood per rectum. He has a history of a low-fiber diet and chronic constipation. His pulse is 115/min and blood pressure is 90/60 mm Hg. Which of the following is the most likely anatomic mechanism for this patient's severe bleeding?",
+                options: {
+                    A: "Autoimmune destruction of the colonic mucosa",
+                    B: "Erosion of a blood vessel within a mucosal herniation",
+                    C: "Hyperplasia of the intestinal crypts",
+                    D: "Ischemic necrosis of the watershed zone",
+                    E: "Transmural inflammation of the terminal ileum"
+                },
+                correctAnswer: "B",
+                rationale: "A common fate and severe complication of colonic diverticula (mucosal herniations) is the erosion of a blood vessel, which causes severe lower GI bleeding resulting in tachycardia and hypotension.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 68: 'Fate of Colonic Diverticula... Erosion of blood vessel causing bleeding... Severe bleeding, increased HR, hypotension'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO4: Inferred LO: Lower Gastrointestinal Bleeding",
+                question: "A 68-year-old woman is admitted to the hospital with massive lower gastrointestinal bleeding due to a bleeding colonic diverticulum. She is lethargic, her pulse is 125/min, and her blood pressure is 85/50 mm Hg. In addition to urgent gastroenterology consultation, which of the following is the most appropriate initial step in the management of this patient?",
+                options: {
+                    A: "Administration of a high-fiber diet and fluids",
+                    B: "Administration of intravenous antibiotics",
+                    C: "Administration of oral stool softeners",
+                    D: "Blood transfusion",
+                    E: "Emergency prophylactic colectomy"
+                },
+                correctAnswer: "D",
+                rationale: "In the setting of severe lower GI bleeding from a diverticulum resulting in hemodynamic instability (tachycardia, hypotension), the patient requires aggressive resuscitation, including a blood transfusion and an urgent gastroenterology consultation. IV antibiotics are indicated for perforation/abscess, not isolated bleeding.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 68: 'Fate of Colonic Diverticula... Erosion of blood vessel causing bleeding... Severe bleeding, increased HR, hypotension, needs blood transfusion, urgent gastroenterology consultation'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO5: Inferred LO: Constipation",
+                question: "A 60-year-old man presents to the clinic complaining of chronic constipation. He admits his diet consists largely of processed foods and lacks fresh fruits and vegetables. A screening colonoscopy reveals multiple mucosal outpouchings in the sigmoid colon. Which of the following pathophysiologic mechanisms most directly led to the formation of these colonic findings?",
+                options: {
+                    A: "Atrophy of the intestinal villi",
+                    B: "Autoimmune destruction of the myenteric plexus",
+                    C: "Decreased colonic compliance and increased intraluminal pressure",
+                    D: "Impaired absorption of bile salts in the terminal ileum",
+                    E: "Increased secretion of vasoactive intestinal peptide"
+                },
+                correctAnswer: "C",
+                rationale: "Colonic diverticulosis is commonly seen in patients with low dietary fiber. The lack of bulk leads to reduced colonic diameter and compliance, causing an increase in intraluminal pressure that forces the mucosa to herniate through the muscular wall defects.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 66: 'Colonic Diverticulosis... Due to reduced colonic diameter and compliance, causing increase in intraluminal pressure... Commonly seen in people with low dietary fiber'"
+            },
+            {
+                section: "Disorders of the Small & Large Intestines",
+                fullLO: "LO5: Inferred LO: Constipation",
+                question: "A 65-year-old woman is diagnosed with uncomplicated colonic diverticulosis during an evaluation for chronic constipation. She currently has no abdominal pain, fever, or rectal bleeding. Which of the following is the most appropriate management for this patient's condition?",
+                options: {
+                    A: "High-fiber diet and stool softeners",
+                    B: "Intravenous antibiotics",
+                    C: "Oral corticosteroids",
+                    D: "Surgical bowel resection",
+                    E: "Vitamin B12 supplementation"
+                },
+                correctAnswer: "A",
+                rationale: "For uncomplicated colonic diverticulosis, the mainstay of management is addressing the underlying constipation and colonic mechanics by prescribing a high-fiber diet, high fluid intake, and stool softeners.",
+                source: "\"Disorders of the Small & Large Intestines PDF\", Slide 70: 'Management of Colonic Diverticulosis... If uncomplicated: High fiber diet, high fluid intake, Stool softeners'"
+            },
+
+            // --- Section 3: Bacterial Infections - Enteric and Peritoneal ---
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO1: Describe the pathogenesis and various treatment options of Clostridioides difficile-associated diarrhea",
+                question: "A 72-year-old hospitalized man develops voluminous, watery diarrhea and abdominal pain five days after receiving a course of clindamycin. Stool testing confirms Clostridioides difficile infection. The severe inflammation, cellular damage, and vascular permeability characterizing this patient's disease are primarily mediated by which of the following bacterial products?",
+                options: {
+                    A: "Cholera toxin",
+                    B: "Hemolysin",
+                    C: "Pre-formed enterotoxin",
+                    D: "Toxin A",
+                    E: "Toxin B"
+                },
+                correctAnswer: "E",
+                rationale: "C. difficile produces two main toxins. Toxin A damages the intestinal mucosa and causes inflammation. Toxin B acts as a cytotoxin, causing profound cellular damage, vascular permeability, severe inflammation, and hemorrhage.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 18: 'C. diff Toxins... Toxin B: Cytotoxin, Cellular damage, Vascular permeability, Severe inflammation and hemorrhage'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO1: Describe the pathogenesis and various treatment options of Clostridioides difficile-associated diarrhea",
+                question: "A 65-year-old woman presents to the clinic with a third recurrence of Clostridioides difficile infection despite multiple previous courses of oral vancomycin and fidaxomicin. She asks the physician if there is an alternative approach that can permanently restore her normal gut flora. Which of the following is the most appropriate treatment option for this patient?",
+                options: {
+                    A: "Fecal microbiota transplant (FMT)",
+                    B: "Intraperitoneal antibiotics",
+                    C: "Intravenous metronidazole",
+                    D: "Oral cephalexin",
+                    E: "Oral ciprofloxacin"
+                },
+                correctAnswer: "A",
+                rationale: "Fecal microbiota transplant (FMT) is highly effective for restoring gut biota and is specifically reserved for recurrent cases of C. difficile infection.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 25: 'C. diff Treatment... Fecal Microbiota Transplant (FMT)... Restores gut biota... Reserved for recurrent cases'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO2: Identify likely pathogens given various clinical features associated with bacterial gastrointestinal infections including food poisoning",
+                question: "A 24-year-old man presents to the emergency department complaining of uncontrollable nausea and vomiting that began 4 hours after eating at a church picnic. He recalls eating two large servings of reheated fried rice. He has no fever and no bloody diarrhea. Which of the following is the most likely causative pathogen?",
+                options: {
+                    A: "Bacillus cereus",
+                    B: "Campylobacter jejuni",
+                    C: "Clostridium perfringens",
+                    D: "Salmonella typhi",
+                    E: "Vibrio cholerae"
+                },
+                correctAnswer: "A",
+                rationale: "Bacillus cereus food poisoning typically presents very quickly (within hours) with prominent vomiting after the ingestion of a pre-formed, heat-stable toxin, classically associated with reheated fried rice.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 44: 'Bacterial Gastroenteritis Summary... Bacillus cereus | Reheated fried rice | Hours | Heat-stable, pre-formed toxin'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO2: Identify likely pathogens given various clinical features associated with bacterial gastrointestinal infections including food poisoning",
+                question: "A 30-year-old woman develops severe, cramping abdominal pain, fever, and bloody diarrhea 4 days after consuming undercooked poultry. Two weeks later, she develops ascending symmetrical muscle weakness and absent deep tendon reflexes. The pathogen most likely responsible for her initial gastrointestinal symptoms is:",
+                options: {
+                    A: "Campylobacter jejuni",
+                    B: "Clostridioides difficile",
+                    C: "Staphylococcus aureus",
+                    D: "Vibrio cholerae",
+                    E: "Yersinia enterocolitica"
+                },
+                correctAnswer: "A",
+                rationale: "Campylobacter jejuni is a common food-borne pathogen associated with undercooked poultry. It causes acute dysentery after an incubation of 2-5 days, and its most severe complication is Guillain-Barre syndrome (ascending paralysis).",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slides 35 & 44: 'Campylobacter jejuni... One of the most common food-borne pathogens... Incubation 2 – 5 days... Severe presentation: Guillain-Barre syndrome' and summary slide 'Undercooked poultry... GBS in severe cases'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO3: Summarize the signs and symptoms of typhoid fever",
+                question: "A 22-year-old man recently returned from a trip to Southeast Asia presents to the clinic with a 5-day history of malaise, cough, and a fever that has steadily increased each day (\"stepladder fever\"). He notes that he has not had a bowel movement in 4 days. Which of the following disease stages is this patient currently experiencing?",
+                options: {
+                    A: "Asymptomatic carriage",
+                    B: "Enteric fever prodrome",
+                    C: "Enteric fever second week",
+                    D: "Pseudomembranous colitis",
+                    E: "Spontaneous bacterial peritonitis"
+                },
+                correctAnswer: "B",
+                rationale: "The prodrome of enteric (typhoid) fever caused by Salmonella typhi is characterized by malaise, headache, cough, a distinctive \"stepladder fever,\" and constipation.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 30: 'Enteric Fever Presentation... Prodrome: Malaise, headache, cough, 'Stepladder fever', Constipation'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO3: Summarize the signs and symptoms of typhoid fever",
+                question: "A 28-year-old woman is admitted to the hospital with a prolonged fever, confusion, and abdominal distension. Physical examination reveals a slow heart rate relative to her fever (bradycardia), hepatosplenomegaly, and a rash consisting of blanching papules on her trunk. These clinical findings are most characteristic of which timeframe in the course of typhoid fever?",
+                options: {
+                    A: "First 12 hours",
+                    B: "Prodromal phase",
+                    C: "1st Week",
+                    D: "7–10 Days",
+                    E: "30 Days"
+                },
+                correctAnswer: "D",
+                rationale: "The 7-10 day period of enteric (typhoid) fever is characterized by psychosis, confusion, bradycardia, hepatosplenomegaly, and \"rose spots\" (blanching papules).",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 30: 'Enteric Fever Presentation... 7 – 10 Days: Psychosis and confusion, Bradycardia, 'Rose spots' -> blanching papules, Hepatosplenomegaly'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO4: Discuss the aspects of prevention and management of Traveler’s Diarrhea",
+                question: "A 35-year-old man is traveling to Central America and requests medication to prevent traveler's diarrhea. His physician recommends over-the-counter bismuth subsalicylate. The physician should inform the patient that this medication is associated with which of the following?",
+                options: {
+                    A: "Blackening of the tongue and stool",
+                    B: "High rates of C. difficile infection",
+                    C: "Increased antimicrobial resistance",
+                    D: "Precipitation of hemolytic uremic syndrome",
+                    E: "Toxic megacolon"
+                },
+                correctAnswer: "A",
+                rationale: "Bismuth subsalicylate is used for the prophylaxis of traveler's diarrhea (reducing incidence by ~50%). A key harmless side effect the patient must be warned about is the blackening of the tongue and stool.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 40: 'Traveler’s Diarrhea Treatment... Prophylaxis: Bismuth subsalicylate | Comments: Reduces incidence by ~50%, Blackening of the tongue and stool'"
+            },
+            {
+                section: "Bacterial Infections - Enteric and Peritoneal",
+                fullLO: "LO4: Discuss the aspects of prevention and management of Traveler’s Diarrhea",
+                question: "A 40-year-old woman develops traveler's diarrhea on the third day of a trip to Mexico. She experiences severe abdominal cramps, fever, and notes blood in her stool. Which of the following medication classes must strictly be avoided in the management of her condition?",
+                options: {
+                    A: "Antimotility agents",
+                    B: "Fluoroquinolones",
+                    C: "Macrolides",
+                    D: "Oral rehydration salts",
+                    E: "Rifamycins"
+                },
+                correctAnswer: "A",
+                rationale: "Antimotility agents should be avoided in patients who present with bloody diarrhea or fever, as slowing gut transit can exacerbate invasive bacterial infections.",
+                source: "\"Bacterial Gastroenteritis & Peritonitis PDF\", Slide 40: 'Traveler’s Diarrhea Treatment... Treatment: Antimotility | Comments: Avoid in bloody diarrhea or fever'"
+            },
+
+            // --- Section 4: Viral Infections and GALT ---
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO1: Describe the clinical features of viral gastroenteritis",
+                question: "A 28-year-old man presents with an acute onset of abdominal cramps, nausea, and diarrhea approximately 36 hours after attending a large banquet. He also reports feeling generalized muscle aches, a headache, and has a low-grade fever. Based on the typical clinical presentation of epidemic viral gastroenteritis, which of the following gross stool characteristics is most expected in this patient?",
+                options: {
+                    A: "Copious amounts of purulent mucus",
+                    B: "Frank, bright red blood",
+                    C: "Non-bloody, watery stool without mucus",
+                    D: "Pale, fatty, and malodorous stool",
+                    E: "\"Rice water\" appearance"
+                },
+                correctAnswer: "C",
+                rationale: "The clinical presentation of viral gastroenteritis (such as Norovirus, a common cause of epidemic outbreaks with an incubation of 24-48 hours) typically involves acute cramps, nausea, diarrhea/vomiting, and systemic symptoms like myalgias, malaise, headache, and low-grade fever. The stool is characteristically watery, non-bloody, and lacks mucus.",
+                source: "\"Viral Infections & GALT PDF\", Slide 19: 'Presentation and Management... Systemic symptoms: Myalgias, malaise, headache, low-grade fever up to 50% | Stool: Non-bloody, no mucus' Note: Also supported by Slide 13 regarding Rotavirus: \"Stool: Watery and without mucus or blood\"."
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO1: Describe the clinical features of viral gastroenteritis",
+                question: "A 5-year-old girl is brought to the clinic with a 2-day history of vomiting and watery diarrhea. Her vital signs are stable, though she shows mild signs of dehydration. Several other children in her preschool class have been out sick with similar \"quick on, quick off\" symptoms this week. In the routine management of this patient's viral gastroenteritis, which of the following is the most appropriate next step?",
+                options: {
+                    A: "Administration of empiric antibiotics",
+                    B: "Enzyme-linked immunosorbent assay (ELISA) of the stool",
+                    C: "Routine viral stool culture",
+                    D: "Stool multiplex PCR assay to identify the exact pathogen",
+                    E: "Supportive care with fluid and electrolyte replacement"
+                },
+                correctAnswer: "E",
+                rationale: "Viral gastroenteritis is typically a self-limited illness (\"quick on, quick off\"). While PCR can be used for diagnosis, laboratory diagnostics are usually unnecessary for routine clinical care. The mainstay of treatment is simply supportive care focusing on fluid and electrolyte replacement.",
+                source: "\"Viral Infections & GALT PDF\", Slide 14: 'Diagnosis and Treatment • Not clinically necessary... • Treatment: fluid and electrolyte replacement' and 'Viral Gastroenteritis Summary • Quick on quick off... • Self-limited • Diagnosis: PCR but usually unnecessary • Treatment: supportive care' (Slide 27)"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO2: Compare and contrast the epidemiologic pattern, clinical presentation, and disease progression of specific viral pathogens",
+                question: "An outbreak of acute gastroenteritis affects 60% of the passengers on a cruise ship. The pathogen responsible is determined to be a small, round-structured single-stranded RNA virus. Which of the following characteristics accurately describes this specific pathogen?",
+                options: {
+                    A: "It is easily destroyed by standard chlorination and heat.",
+                    B: "It is most commonly spread via mosquito vectors.",
+                    C: "It is highly resistant to chlorine and heat.",
+                    D: "It produces a prominent bloody dysentery.",
+                    E: "It routinely has an incubation period of 8 to 10 days."
+                },
+                correctAnswer: "C",
+                rationale: "The pathogen is Norovirus, which causes ~95% of non-bacterial outbreaks on cruise ships. Norovirus is famously characterized by a high attack rate and resistance to standard chlorine and heat.",
+                source: "\"Viral Infections & GALT PDF\", Slide 18: 'Norovirus Epidemics... Cruise ships, restaurants... Resistant to chlorine and heat'"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO2: Compare and contrast the epidemiologic pattern, clinical presentation, and disease progression of specific viral pathogens",
+                question: "A 2-year-old child presents with a 7-day history of watery diarrhea. The physician suspects a viral etiology but notes that the incubation and illness duration are significantly longer than typical rotavirus or norovirus infections. Which of the following viral pathogens is most likely responsible for this prolonged course of endemic diarrhea?",
+                options: {
+                    A: "Adenovirus",
+                    B: "Astrovirus",
+                    C: "Cytomegalovirus",
+                    D: "Norovirus",
+                    E: "Sapovirus"
+                },
+                correctAnswer: "A",
+                rationale: "Adenovirus (specifically serogroup F, types 40/41) causes endemic diarrhea in infants and children. It is distinguished from other viral GI pathogens by its longer incubation period (8-10 days) and longer illness duration (5-12 days).",
+                source: "\"Viral Infections & GALT PDF\", Slides 20 & 28: 'Adenoviruses... Incubation is longer (8 – 10 days)... Illness also longer (5 – 12 days)' and 'Viral Gastroenteritis Summary... Adenovirus | 8 - 10 days | 5 - 12 days'"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO3: Summarize the extraintestinal presentations associated with Enterovirus infections",
+                question: "A 16-year-old boy presents to the emergency department with severe, intermittent, sharp chest pain that worsens with deep inspiration. An EKG and cardiac enzymes are normal. The physician diagnoses him with Bornholm disease (pleurodynia). This condition is classically caused by an infection with which of the following enteroviruses?",
+                options: {
+                    A: "Coxsackievirus A16",
+                    B: "Coxsackievirus B",
+                    C: "Enterovirus 70",
+                    D: "Enterovirus 71",
+                    E: "Enterovirus-D68"
+                },
+                correctAnswer: "B",
+                rationale: "Pleurodynia (also known as Bornholm disease), characterized by severe, intermittent chest pain, is an extraintestinal presentation caused by Coxsackievirus B.",
+                source: "\"Viral Infections & GALT PDF\", Slide 24: 'Enterovirus Presentations... Pleurodynia (Bornholm disease) – severe, intermittent chest pain: Coxsackievirus B'"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO3: Summarize the extraintestinal presentations associated with Enterovirus infections",
+                question: "A 3-year-old girl is brought to the clinic because of a low-grade fever and a rash. Physical examination reveals painful, blister-like sores in her mouth and a maculopapular rash with vesicles on her palms and the soles of her feet. This clinical syndrome is most commonly associated with which of the following pathogens?",
+                options: {
+                    A: "Astrovirus",
+                    B: "Coxsackievirus A16 or A6",
+                    C: "Enterovirus 70",
+                    D: "Enterovirus-D68",
+                    E: "Rotavirus"
+                },
+                correctAnswer: "B",
+                rationale: "The child has Hand, Foot, and Mouth Disease (HFMD). This enterovirus presentation is classically caused by Coxsackievirus A16 or A6.",
+                source: "\"Viral Infections & GALT PDF\", Slide 24: 'Enterovirus Presentations... Hand, Foot, and Mouth Disease (HFMD): Coxsackievirus A16 or A6'"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO4: Correlate the pathophysiology of gut-associated lymphoid tissue (GALT) in patients living with HIV with host immunology and infection in the setting of diarrhea",
+                question: "A 45-year-old man living with advanced HIV develops chronic diarrhea. An endoscopic biopsy of his intestinal mucosa reveals profound depletion of CD4+ T cells within the gut-associated lymphoid tissue (GALT). According to the pathophysiological cascade of HIV in the gut, this CD4+ depletion most directly leads to which of the following?",
+                options: {
+                    A: "Complete resolution of local inflammatory pathways",
+                    B: "Hyperplasia of Peyer's patches",
+                    C: "Mucosal disruption, dysbiosis, and microbial translocation",
+                    D: "Overproduction of gastric intrinsic factor",
+                    E: "Spontaneous clearance of the HIV virus"
+                },
+                correctAnswer: "C",
+                rationale: "In HIV infection, CD4+ depletion in the GALT leads directly to mucosal disruption, dysbiosis, and microbial translocation. This results in systemic immune activation, inflammation, and further organ damage.",
+                source: "\"Viral Infections & GALT PDF\", Slide 30: 'Immune Activation [Flowchart]: HIV infection -> CD4+ depletion in GALT, mucosal disruption, dysbiosis, microbial translocation -> Inflammation, immunoactivation'"
+            },
+            {
+                section: "Viral Infections and GALT",
+                fullLO: "LO4: Correlate the pathophysiology of gut-associated lymphoid tissue (GALT) in patients living with HIV with host immunology and infection in the setting of diarrhea",
+                question: "A 50-year-old woman living with HIV and currently stable on antiretroviral therapy (ART) suffers from chronic, non-infectious, secretory diarrhea. She is prescribed crofelemer. This medication exerts its therapeutic effect in the gastrointestinal lumen by blocking which of the following structures?",
+                options: {
+                    A: "Alpha-4 beta-7 integrins",
+                    B: "Calcium-activated chloride channels (CaCC) and CFTR",
+                    C: "CD4+ T-cell receptors",
+                    D: "Peripheral mu-opioid receptors",
+                    E: "Viral reverse transcriptase"
+                },
+                correctAnswer: "B",
+                rationale: "Crofelemer is used to treat non-infectious diarrhea in HIV+ individuals on ART. It works by inhibiting the secretion of chloride ions and water into the GI lumen by blocking both the Calcium-activated Chloride Channel (CaCC) and the Cystic Fibrosis Transmembrane conductance Regulator (CFTR).",
+                source: "\"Viral Infections & GALT PDF\", Slide 31: 'HIV-Associated Diarrhea... Non-infectious Diarrhea in HIV+ Individuals on ART... Crofelemer[diagram shows it blocking CaCC and CFTR chloride channels]'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Bacterial Infections")) btnText = "Bacterial Infections";
+                    if (btnText.includes("Protozoal Infections")) btnText = "Protozoa & Helminths";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
